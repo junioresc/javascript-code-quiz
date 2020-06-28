@@ -4,5 +4,27 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 10px 20px;
+    font-size: 20px;
 }
 
+.high-score {
+    cursor: pointer;
+    text-decoration: black overline underline;
+}
+
+.hidden {
+    display: none;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.confirm-answer {
+    border-radius: 10px;
+}

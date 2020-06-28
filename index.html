@@ -10,13 +10,21 @@
     <p class="high-score">View Highscore</p>
     <p>Time left: <span id="timer">120</span></p>
 </header>
-<main>
-    <section class="question-wrapper">
-        <h3 id="questions"></h3>
-        <ul id="possible-answers">
-
-        </ul>
-    </section>
+<main id="page-content">
+    <h1 class="title">Beginner JavaScript Quiz</h1>
+    <div id="content-container">
+        <p id="question">Welcome to your quiz! There are a total of 10 questions and you have 2 minutes to complete them. If you get a question right then you gain 15 seconds, if you answer wrong then -25 seconds.</p>
+        <button type="submit" class="start-btn">Start Quiz</button>
+        <div id="choices" class="hidden choices-wrapper">
+            <button type="submit" class="choice-btn" id="c1"></button>
+            <button type="submit" class="choice-btn" id="c2"></button>
+            <button type="submit" class="choice-btn" id="c3"></button>
+            <button type="submit" class="choice-btn" id="c4"></button>
+        </div>
+        <div class="confirm-answer">
+            <p class="confirm"></p>
+        </div>
+    </div>
 </main>
 <body>
     <script src="assets/js/script.js"></script>
