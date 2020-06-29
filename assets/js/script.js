@@ -8,11 +8,20 @@ let choice2 = document.querySelector("#c2");
 let choice3 = document.querySelector("#c3");
 let choice4 = document.querySelector("#c4");
 let highScoreBtn = document.querySelector(".high-score");
+let resetBtn = document.querySelector("#reset");
+let backBtn = document.querySelector("#btn");
 let pageContentEl = document.querySelector("#page-content");
 let timerEl = document.querySelector("#timer");
 let headerEl = document.querySelector("header");
+let containerEl = document.querySelector("#content-container");
+let formEl = document.querySelector(".user-input");
 let timeLeft = 120;
 let selectedQuestion = 0;
+let itemId = 0
+let user = {
+    name: "",
+    score: 0
+};
 
 
 // Array of questions and choices stored in an Array
@@ -29,27 +38,29 @@ let questions = [
     {q:"In HTML, you use a button on a form to:", c1:"run a program", c2:"submit a form to a server", c3:"reset a form to its original state", c4:"all of the above", a:"all of the above"}
 ];
 
-questions.sort(() => 0.5 - Math.random());
+
 
 let startQuiz = function() {
+    questions.sort(() => 0.5 - Math.random());
     startBtn.classList.add("hidden");
     title.classList.add("hidden");
     choices.classList.remove("hidden");
     time = setInterval(timer, 1000);
     displayQuiz();
+    user.score = 0;
 };
 
 let timer = function() {
     timerEl.textContent = timeLeft;
     timeLeft--;
     if (timeLeft <= 0) {
-        clearInterval(timer);
-        gameOver();
+        timeLeft = 0;
+        clearInterval(time);
+        setTimeout(gameOver, 1000 * 1.5);
     }
 }
 
 let displayQuiz = function() {
-    gameOver();
     questionEl.textContent = questions[selectedQuestion].q;
     choice1.textContent = "1. " + questions[selectedQuestion].c1;
     choice2.textContent = "2. " + questions[selectedQuestion].c2;
@@ -67,39 +78,75 @@ let checkAnswer = function(response) {
 
 let confirmResponse = function() {
     
+    
     if (event.target.matches(".choice-btn")) {
         var response = event.target.textContent.slice(3);
         checkAnswer(response);
         if (checkAnswer(response) === true) {
-            confirmEl.setAttribute("style", "background-color: green");
+            confirmEl.setAttribute("style", "background: green");
             confirmEl.textContent = "Correct!"
             setTimeout(clearConfirm, 1000 * 1.5);
+            user.score++;
+            timeLeft += 15;
         } else {
-            confirmEl.setAttribute("style", "background-color: red");
+            confirmEl.setAttribute("style", "background: red");
             confirmEl.textContent = "Wrong.";
             setTimeout(clearConfirm, 1000 * 1.5);
+            timeLeft -= 25;
         }
+        gameOver();
+        if (gameOver) {
         selectedQuestion++;
         setTimeout(displayQuiz, 1000 * 1.5);
+        }
     }
 };
 
 let clearConfirm = function() {
     confirmEl.textContent = ""
-    confirmEl.setAttribute("style", "background-color: white")
+    confirmEl.setAttribute("style", "background: white")
+}
+
+let resetPage = function() {
+    window.location.reload(true);
+}
+
+let resetLeaderboard = function() {
+    localStorage.clear();
 }
 
 let displayLeaderboards = function() {
+    questionEl.textContent = "";
+    console.log(user.score);
     highScoreBtn.classList.add("hidden");
+    startBtn.classList.add("hidden");
     headerEl.setAttribute("style", "color: white");
+    title.textContent = "Leaderboards";
+    if (user.score > 0) {
+        formEl.classList.remove("hidden");
+        var createBtn = document.createElement("button");
+        createBtn.textContent = "Submit";
+        createBtn.classList.add("start-btn");
 
+    }
+    resetBtn.classList.remove("hidden");
+    backBtn.classList.remove("hidden");
+    var listItemEl = document.createElement("li");
+
+    title.classList.remove("hidden");
 }
 
+
 let gameOver = function() {
-    if (selectedQuestion === questions.length || timer <= 0) {
+    if (selectedQuestion === questions.length || timeLeft <= 0) {
         choices.classList.add("hidden");
-        clearInterval(timer);
+        localStorage.setItem("username", JSON.stringify(user.name));
+        localStorage.setItem("score", JSON.stringify(user.score));
+        var highScore = JSON.parse(localStorage.getItem("score"));
+        console.log(highScore);
+        clearInterval(time);
         displayLeaderboards();
+        return true;
     }
 }
 
@@ -108,3 +155,10 @@ startBtn.addEventListener("click", startQuiz);
 pageContentEl.addEventListener("click", confirmResponse);
 
 highScoreBtn.addEventListener("click", displayLeaderboards);
+
+backBtn.addEventListener("click", resetPage);
+
+resetBtn.addEventListener("click", resetLeaderboard);
+
+formEl.addEventListener("click", submitScore);
+
